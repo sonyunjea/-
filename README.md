@@ -1,100 +1,34 @@
-/*
-Chosun Univ. a script for skipping lab safety courses
-https://safetylabs.chosun.ac.kr/
+# 조선대학교 연구실 안전교육 자동 스킵 스크립트
 
+## 📌 개요
+조선대학교 연구실 안전교육 사이트에서 강의 진행 시간을 단축하고, 퀴즈 자동 입력을 도와주는 스크립트입니다.
 
-[사용 방법]
-1. '수강하기' 버튼을 눌러 연구실 안전교육 창을 띄운다.
-2. 개발자도구(F12 버튼을 눌러)를 열어 'console' 탭으로 이동한다.
-3. 아래 스크립트를 붙여넣고 실행한다.
-4. 모든 과목에 대해 반복한다.
+- **사이트:** [조선대 연구실 안전교육](https://safetylabs.chosun.ac.kr/)
 
-ref: https://kysgh2.tistory.com/113
-*/
+## 🚀 사용 방법
+### 1. 강의 자동 스킵
+1. [조선대 연구실 안전교육 사이트](https://safetylabs.chosun.ac.kr/)에 접속합니다.
+2. '수강하기' 버튼을 클릭하여 강의 창을 엽니다.
+3. `F12` 키를 눌러 개발자 도구를 실행하고, `Console` 탭으로 이동합니다.
+4. [chosun_lab_safety_skip.js](chosun_lab_safety_skip.js) 파일의 내용을 복사하여 `Console`에 붙여넣고 실행합니다.
+5. 자동으로 모든 강의 페이지가 스킵됩니다.
 
-/* -------------------- [1] 현재 페이지 번호 자동 감지 -------------------- */
-function getCurrentPage() {
-    let pageNumbers = [];
-    for (let i = 0; i < 100; i++) {
-        if (document.body.innerText.includes(i)) {
-            pageNumbers.push(i);
-        }
-    }
-    console.log("감지된 페이지 번호 목록:", pageNumbers);
+### 2. 퀴즈 자동 입력
+1. 모든 강의를 수강한 후, '평가하기' 버튼을 클릭합니다.
+2. `F12` 키를 눌러 개발자 도구를 실행하고, `Console` 탭으로 이동합니다.
+3. [chosun_lab_safety_skip.js](chosun_lab_safety_skip.js) 파일의 내용을 복사하여 `Console`에 붙여넣고 실행합니다.
+4. 자동으로 정답이 입력되고 저장됩니다.
 
-    // 연속된 숫자 중 가장 큰 값을 현재 페이지 번호로 설정
-    let currentPage = Math.max(...pageNumbers);
-    console.log("추출된 현재 페이지 번호:", currentPage);
-    return currentPage;
-}
+## ⚠️ 주의사항
+- **총 강의 페이지 수(`totalPageNum`)는 강의에 따라 다를 수 있습니다.**  
+  실행 전에 강의 페이지 수를 확인하고 필요하면 스크립트의 `totalPageNum` 값을 수정하세요.
+- **사이트 구조가 변경될 경우 스크립트가 정상 작동하지 않을 수 있습니다.**
+- **개발자 도구(F12)에서 실행해야 정상적으로 작동합니다.**
+- **이 스크립트는 개인적인 학습을 위한 것이며, 부정행위로 사용될 경우 책임은 사용자에게 있습니다.**
 
-// 현재 페이지 번호 자동 설정
-var nowPageNum = getCurrentPage();
-var totalPageNum = 30;  // 조선대 연구실 강의의 전체 페이지 수 (필요 시 직접 확인 후 변경 가능)
+## 🛠 필요 사항
+- 최신 웹 브라우저 (Chrome, Edge, Firefox)
+- 개발자 도구(F12) 접근 가능
 
-console.log("현재 페이지:", nowPageNum, "전체 페이지:", totalPageNum);
-
-
-/* -------------------- [2] 강의 자동 스킵 -------------------- */
-var currentPage = nowPageNum;
-function goNextPage() {
-    if (currentPage < totalPageNum) {
-        opener.PageMove(currentPage);
-        console.log(`${currentPage} 페이지를 수강완료했습니다.`);
-        currentPage += 1;
-        setTimeout(goNextPage, 100);
-    } else {
-        opener.PageMove(currentPage);
-        console.log('강의 수강이 완료되었습니다!');
-        setTimeout(window.close, 200);
-    }
-}
-setTimeout(goNextPage, 100);
-
-
-/* -------------------- [3] 퀴즈 자동 입력 -------------------- */
-/*
-[사용 방법]
-1. 모든 강의를 수강한 후 '평가하기' 버튼을 누른다.
-2. 개발자도구(F12 버튼을 눌러)를 열어 'console' 탭으로 이동한다.
-3. 아래 스크립트를 붙여넣고 실행한다.
-*/
-
-function autoSolveQuiz() {
-    if (typeof SetExamAfeter === "function") {
-        SetExamAfeter();
-    } else {
-        console.log("SetExamAfeter() 함수가 존재하지 않습니다.");
-    }
-
-    let answers = [];
-    for (let i = 0; i < questionCountInExam; i++) {
-        let answerElem = document.getElementById("qustionCorrectNo_" + i);
-        if (answerElem) {
-            answers.push(answerElem.value);
-        }
-    }
-
-    if (typeof SetExamBefore === "function") {
-        SetExamBefore();
-    } else {
-        console.log("SetExamBefore() 함수가 존재하지 않습니다.");
-    }
-
-    for (let i = 0; i < questionCountInExam; i++) {
-        let ls = document.getElementsByName(`qustionAnswerList[${i}].Answer`);
-        if (ls.length > 0) {
-            ls[answers[i] - 1].checked = true;
-        }
-    }
-
-    let saveBtn = document.getElementById("Exam_btnSave");
-    if (saveBtn) {
-        saveBtn.click();
-    } else {
-        console.log("저장 버튼을 찾을 수 없습니다.");
-    }
-}
-
-// 퀴즈 자동 풀이 실행
-setTimeout(autoSolveQuiz, 500);
+---
+© 2024 손윤재 - 조선대학교 연구실 안전교육 자동화 프로젝트
