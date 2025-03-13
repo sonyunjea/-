@@ -2,7 +2,6 @@
 Chosun Univ. a script for skipping lab safety courses
 https://safetylabs.chosun.ac.kr/
 
-
 [사용 방법]
 1. '수강하기' 버튼을 눌러 연구실 안전교육 창을 띄운다.
 2. 개발자도구(F12 버튼을 눌러)를 열어 'console' 탭으로 이동한다.
